@@ -3,7 +3,7 @@ const SYSTEM = "You are Bharadwaj AI, a helpful, friendly and smart assistant. R
 
 const PROVIDERS = {
   nara:   { url: "https://router.bynara.id/v1/chat/completions", key: "NARA_API_KEY",   model: "auto/bynara" },
-  grok:   { url: "https://api.x.ai/v1/chat/completions",         key: "GROK_API_KEY",   model: "grok-4" },
+  groq:   { url: "https://api.groq.com/openai/v1/chat/completions", key: "GROQ_API_KEY", model: "openai/gpt-oss-120b" },
   gemini: { url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", key: "GEMINI_API_KEY", model: "gemini-2.5-flash" },
 };
 
