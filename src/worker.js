@@ -12,6 +12,9 @@ const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, header
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    if (url.pathname === "/api/health") {
+      return json(Object.fromEntries(Object.entries(PROVIDERS).map(([k, v]) => [k, env[v.key] ? "key set" : "key MISSING"])));
+    }
     if (url.pathname === "/api/chat" && req.method === "POST") {
       let body;
       try { body = await req.json(); } catch { return json({ error: "Bad request" }, 400); }
@@ -21,11 +24,12 @@ export default {
       const key = env[p.key];
       if (!key) return json({ error: `${p.key} Worker ke Variables and Secrets me set nahi hai` }, 500);
       const model = env[provider.toUpperCase() + "_MODEL"] || p.model; // optional override
-      const r = await fetch(p.url, {
+      let r;
+      try { r = await fetch(p.url, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
         body: JSON.stringify({ model, stream: true, messages: [{ role: "system", content: SYSTEM }, ...messages] }),
-      });
+      }); } catch (e) { return json({ error: "Provider se connect nahi hua: " + e.message }, 502); }
       if (!r.ok) return json({ error: (await r.text()).slice(0, 600) }, r.status);
       return new Response(r.body, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
     }

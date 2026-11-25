@@ -83,14 +83,14 @@ async function sendMsg(){
   try{
     const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,body:JSON.stringify({provider:E.prov.value,messages:api})});
     if(!r.ok){let e='Error '+r.status;try{e=(await r.json()).error||e}catch{}throw new Error(e)}
-    const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
+    if((r.headers.get('content-type')||'').includes('json')){const j=await r.json();acc=j.choices?.[0]?.message?.content||'';if(!acc)throw new Error(JSON.stringify(j).slice(0,300))}else{const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
     for(;;){
       const{done,value}=await rd.read();if(done)break;
       buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop();
       for(const l of lines){if(!l.startsWith('data:'))continue;const d=l.slice(5).trim();if(d==='[DONE]')continue;
-        try{const t=JSON.parse(d).choices?.[0]?.delta?.content;if(t){acc+=t;b.innerHTML=md(acc)+'<span class="cur"></span>';scroll()}}catch{}}
+        let j;try{j=JSON.parse(d)}catch{continue}if(j.error)throw new Error(j.error.message||JSON.stringify(j.error));const t=j.choices?.[0]?.delta?.content;if(t){acc+=t;b.innerHTML=md(acc)+'<span class="cur"></span>';scroll()}}
     }
-    if(!acc)throw new Error('Empty response');
+    }if(!acc)throw new Error('Empty response from model');
   }catch(e){if(e.name==='AbortError'){if(!acc)b.innerHTML='<span class="err">Stopped.</span>'}else b.innerHTML=md(acc)+`<p class="err">⚠ ${esc(e.message)}</p>`}
   if(acc){b.innerHTML=md(acc);cur.msgs.push({role:'assistant',content:acc})}
   busy=false;ctrl=null;E.send.innerHTML=UP;save();renderHist();sync();
