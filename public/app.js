@@ -1,3 +1,4 @@
+const UP='<svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',ST='<svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>';
 const $=s=>document.querySelector(s);
 const E={msgs:$('#msgs'),chat:$('#chat'),input:$('#input'),send:$('#send'),files:$('#files'),hist:$('#hist'),side:$('#side'),scrim:$('#scrim'),prov:$('#provider'),search:$('#search'),file:$('#file')};
 let chats=[],cur=null,pending=[],busy=false,ctrl=null;
@@ -19,18 +20,18 @@ function md(s){
   if(list)out.push(`</${list}>`);
   return out.join('').replace(/\u0000(\d+)\u0000/g,(_,i)=>blocks[i]).replace(/<p>(<pre)/g,'$1').replace(/<\/pre><\/p>/g,'</pre>');
 }
-const tagHTML=(n,img)=>`<span class="tag">${img?`<img src="${img}">`:'📎'}${esc(n)}</span>`;
+const tagHTML=(n,img)=>`<span class="tag">${img?`<img src="${img}">`:''}${esc(n)}</span>`;
 function addMsg(role,html,names=[],imgs={}){
   const d=document.createElement('div');d.className='m '+(role==='user'?'u':'a');
   const tags=names.length?`<div class="tags">${names.map(n=>tagHTML(n,imgs[n])).join('')}</div>`:'';
-  d.innerHTML=role==='user'?`<div>${tags}<div class="bub"></div></div>`:`<span class="orb sm av"></span><div class="bub"></div>`;
+  d.innerHTML=role==='user'?`<div>${tags}<div class="bub"></div></div>`:`<div class="bub"></div>`;
   const b=d.querySelector('.bub');
   if(role==='user'){b.textContent=html;if(!html)b.remove()}else b.innerHTML=html;
   E.msgs.appendChild(d);scroll();return b;
 }
 const scroll=()=>E.chat.scrollTo({top:E.chat.scrollHeight,behavior:'smooth'});
 function hero(){
-  E.msgs.innerHTML=`<div class="hero"><span class="orb xl"></span><h1>Namaste, main Bharadwaj AI hoon</h1><p>Kuch bhi poochho, files ya images bhejo.</p><div class="chips">${['Ek short kahani likho','Is code ko explain karo','Business idea do','Hindi me email draft karo'].map(t=>`<button>${t}</button>`).join('')}</div></div>`;
+  E.msgs.innerHTML=`<div class="hero"><h1>How can I help you today?</h1><p>Ask anything, or attach files and images.</p><div class="chips">${['Explain a concept simply','Help me write an email','Review my code','Plan my week'].map(t=>`<button>${t}</button>`).join('')}</div></div>`;
 }
 function render(){
   E.msgs.innerHTML='';
@@ -42,7 +43,7 @@ function renderHist(){
   const q=E.search.value.toLowerCase();
   const l=chats.filter(c=>!q||c.title.toLowerCase().includes(q)||c.msgs.some(m=>m.content.toLowerCase().includes(q))).sort((a,b)=>b.ts-a.ts);
   E.hist.innerHTML=l.length?'':'<div class="empty-h">No chats found</div>';
-  l.forEach(c=>{const d=document.createElement('div');d.className='h'+(cur&&cur.id===c.id?' on':'');d.innerHTML=`<span>${esc(c.title)}</span><button aria-label="Delete">🗑</button>`;
+  l.forEach(c=>{const d=document.createElement('div');d.className='h'+(cur&&cur.id===c.id?' on':'');d.innerHTML=`<span>${esc(c.title)}</span><button aria-label="Delete"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>`;
     d.onclick=()=>{cur=c;render();closeSide()};
     d.querySelector('button').onclick=e=>{e.stopPropagation();chats=chats.filter(x=>x!==c);if(cur===c)cur=null;save();render()};
     E.hist.appendChild(d)});
@@ -51,7 +52,7 @@ const openSide=()=>{E.side.classList.add('open');E.scrim.classList.add('on')};
 const closeSide=()=>{E.side.classList.remove('open');E.scrim.classList.remove('on')};
 function newChat(){if(busy)return;cur=null;pending=[];renderFiles();render();closeSide();E.input.focus()}
 function sync(){E.input.style.height='auto';E.input.style.height=Math.min(E.input.scrollHeight,160)+'px';E.send.disabled=!busy&&!(E.input.value.trim()||pending.length)}
-function renderFiles(){E.files.innerHTML='';pending.forEach((f,i)=>{const t=document.createElement('span');t.className='tag';t.innerHTML=`${f.img?`<img src="${f.img}">`:'📎'}${esc(f.name)} <button>✕</button>`;t.querySelector('button').onclick=()=>{pending.splice(i,1);renderFiles();sync()};E.files.appendChild(t)});sync()}
+function renderFiles(){E.files.innerHTML='';pending.forEach((f,i)=>{const t=document.createElement('span');t.className='tag';t.innerHTML=`${f.img?`<img src="${f.img}">`:''}${esc(f.name)} <button>✕</button>`;t.querySelector('button').onclick=()=>{pending.splice(i,1);renderFiles();sync()};E.files.appendChild(t)});sync()}
 const TEXT=/\.(txt|md|json|csv|js|ts|jsx|tsx|py|html|css|xml|yml|yaml|java|kt|c|cpp|h|go|rs|php|sql|sh|toml|ini|log|gradle|properties)$/i;
 const readAs=(f,m)=>new Promise(r=>{const x=new FileReader();x.onload=()=>r(x.result);m==='text'?x.readAsText(f):x.readAsDataURL(f)});
 E.file.onchange=async()=>{
@@ -71,7 +72,7 @@ async function sendMsg(){
   const um={role:'user',content:text,names:att.map(a=>a.name),parts:att};
   cur.msgs.push(um);cur.ts=Date.now();addMsg('user',text,um.names,imgs);
   const b=addMsg('assistant','<div class="sk"><i></i><i></i><i></i></div>');
-  busy=true;E.send.textContent='■';E.send.classList.add('stop');E.send.disabled=false;sync();E.send.disabled=false;
+  busy=true;E.send.innerHTML=ST;;E.send.disabled=false;sync();E.send.disabled=false;
   const api=cur.msgs.map(m=>{
     if(m.role!=='user'||!m.parts?.length)return{role:m.role,content:m.content+((m.names?.length&&!m.parts)?`\n[Attached earlier: ${m.names.join(', ')}]`:'')};
     let t=m.content;const c=[];
@@ -92,7 +93,7 @@ async function sendMsg(){
     if(!acc)throw new Error('Empty response');
   }catch(e){if(e.name==='AbortError'){if(!acc)b.innerHTML='<span class="err">Stopped.</span>'}else b.innerHTML=md(acc)+`<p class="err">⚠ ${esc(e.message)}</p>`}
   if(acc){b.innerHTML=md(acc);cur.msgs.push({role:'assistant',content:acc})}
-  busy=false;ctrl=null;E.send.textContent='↑';E.send.classList.remove('stop');save();renderHist();sync();
+  busy=false;ctrl=null;E.send.innerHTML=UP;save();renderHist();sync();
 }
 E.send.onclick=()=>busy?ctrl&&ctrl.abort():sendMsg();
 E.input.oninput=sync;
@@ -105,4 +106,4 @@ E.prov.onchange=()=>localStorage.setItem('bh_prov',E.prov.value);
 E.search.oninput=renderHist;
 $('#menu').onclick=openSide;$('#closeSide').onclick=closeSide;E.scrim.onclick=closeSide;
 $('#newChat').onclick=newChat;$('#newTop').onclick=newChat;
-render();sync();
+E.send.innerHTML=UP;render();sync();
