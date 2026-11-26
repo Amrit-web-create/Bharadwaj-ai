@@ -8,7 +8,8 @@
    - NARA_API_KEY  (NaraRouter key, sk-nry-...)
    - GROQ_API_KEY  (GroqCloud key, gsk_...)
    - GEMINI_API_KEY (Google AI Studio key)
-   Optional (Text): NARA_MODEL, GROQ_MODEL, GEMINI_MODEL se model name badal sakte ho.
+   - NVIDIA_API_KEY (build.nvidia.com key, nvapi-...)
+   Optional (Text): NARA_MODEL, GROQ_MODEL, GEMINI_MODEL, NVIDIA_MODEL se model name badal sakte ho.
 4. Deploy ke baad upar dropdown se Nara / Groq / Gemini choose karo.
 
 API keys sirf Worker me rehti hain, frontend me kabhi nahi.

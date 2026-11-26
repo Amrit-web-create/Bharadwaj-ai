@@ -1,9 +1,10 @@
 // Bharadwaj AI - Cloudflare Worker (API keys yahin Worker secrets me rehte hain, frontend me kabhi nahi)
-const SYSTEM = "You are Bharadwaj AI, a helpful, friendly and smart assistant. Reply in the same language the user writes in (Hindi, Hinglish or English). Use clean markdown.";
+const SYSTEM = "You are Bharadwaj AI, a helpful, friendly and smart assistant. Reply in the same language the user writes in (Hindi, Hinglish or English). Use clean markdown (tables are fine). When you write code, always use fenced blocks and put the file name after the language, like ```html index.html. For multi-file projects give every file its own block with its path. For web pages prefer one self-contained HTML file unless asked otherwise.";
 
 const PROVIDERS = {
   nara:   { url: "https://router.bynara.id/v1/chat/completions", key: "NARA_API_KEY",   model: "auto/bynara" },
   groq:   { url: "https://api.groq.com/openai/v1/chat/completions", key: "GROQ_API_KEY", model: "openai/gpt-oss-120b" },
+  nvidia: { url: "https://integrate.api.nvidia.com/v1/chat/completions", key: "NVIDIA_API_KEY", model: "meta/llama-3.3-70b-instruct" },
   gemini: { url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", key: "GEMINI_API_KEY", model: "gemini-2.5-flash" },
 };
 
