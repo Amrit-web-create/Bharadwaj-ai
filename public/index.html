@@ -34,7 +34,7 @@
         <textarea id="input" rows="1" placeholder="Message Bharadwaj AI"></textarea>
         <div class="bar">
           <div class="l">
-            <label class="icon" aria-label="Attach"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><input type="file" id="file" multiple hidden></label>
+            <button class="icon" id="plus" aria-label="Attach"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
             <button class="pill" id="modelBtn"><span id="modelName"></span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
           </div>
           <div class="r">
@@ -42,7 +42,17 @@
             <button class="send" id="send" disabled aria-label="Send"></button>
           </div>
         </div>
+        <div class="pop plus" id="plusPop">
+          <button data-in="#fileCam"><svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 012-2h2l1.5-2h5L16 6h2a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><circle cx="12" cy="12.5" r="3.5"/></svg>Camera</button>
+          <button data-in="#filePhoto"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 9"/></svg>Photos &amp; videos</button>
+          <button data-in="#fileAny"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5"/></svg>Files</button>
+          <button data-in="#fileZip"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Project (zip)</button>
+        </div>
         <div class="pop" id="pop"></div>
+        <input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+        <input type="file" id="filePhoto" accept="image/*,video/*" multiple hidden>
+        <input type="file" id="fileAny" multiple hidden>
+        <input type="file" id="fileZip" accept=".zip,application/zip" hidden>
       </div>
     </div></footer>
   </main>
@@ -62,12 +72,32 @@
 
 <div class="lb" id="lb"><button class="icon" id="lbClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div id="lbBody"></div></div>
 
-<div class="sheet" id="setSheet"><div class="sc">
-  <div class="sh"><b>Settings</b><button class="icon" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-  <div class="srow"><span>Appearance</span><div class="seg" id="themeSeg"><button data-t="system">System</button><button data-t="light">Light</button><button data-t="dark">Dark</button></div></div>
-  <div class="srow"><span>Delete all chats</span><button class="dbtn" id="clearAll">Delete</button></div>
-  <p class="sfoot">Bharadwaj AI · API keys stay safely in your Cloudflare Worker.</p>
-</div></div>
+<div class="page" id="setPage">
+  <div class="ptop"><button class="icon" id="setBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><b>Settings</b><span style="width:44px"></span></div>
+  <div class="pbody">
+    <h4>Appearance</h4>
+    <div class="cards" id="themeSeg">
+      <button data-t="light" class="tcard"><i class="tl"></i>Light</button>
+      <button data-t="system" class="tcard"><i class="ta"></i>Auto</button>
+      <button data-t="dark" class="tcard"><i class="td"></i>Dark</button>
+    </div>
+    <p class="hint">Auto follows your device's light or dark mode.</p>
+    <h4>Chat font</h4>
+    <div class="fonts" id="fontSeg">
+      <button data-f="default"><b>Aa</b><small>Default</small></button>
+      <button data-f="serif"><b style="font-family:Georgia,serif">Aa</b><small>Serif</small></button>
+      <button data-f="bold"><b style="font-weight:700">Aa</b><small>Bold</small></button>
+      <button data-f="mono"><b style="font-family:ui-monospace,Menlo,monospace">Aa</b><small>Mono</small></button>
+    </div>
+    <h4>Text size</h4>
+    <div class="sizes" id="sizeSeg"><button data-s="s">Small</button><button data-s="m">Default</button><button data-s="l">Large</button><button data-s="xl">Huge</button></div>
+    <h4>Default model</h4>
+    <div class="list" id="modelList"></div>
+    <h4>Data</h4>
+    <button class="dbtn wide" id="clearAll">Delete all chats</button>
+    <p class="sfoot">Bharadwaj AI · API keys stay safely in your Cloudflare Worker.</p>
+  </div>
+</div>
 <div class="sheet" id="artSheet"><div class="sc">
   <div class="sh"><b>Artifacts</b><button class="icon" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div id="artList"></div>
